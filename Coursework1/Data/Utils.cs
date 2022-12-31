@@ -59,4 +59,9 @@ public static class Utils
     {
         return Path.Combine(GetAppDirectoryPath(), "_inventory.json");
     }
+
+    public static string GetItemRequestFilePath()//userId
+    {
+        return Path.Combine(GetAppDirectoryPath(), "_item_request_demo.json");
+    }
 }

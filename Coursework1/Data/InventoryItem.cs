@@ -14,4 +14,14 @@ namespace Coursework1.Data
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
+
+
+    public class ItemRequest 
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string UserName { get; set; }
+        public string ItemName { get; set; }
+        public int Quantity { get; set; }
+        public bool ApprovalStatus { get; set; }
+    }
 }

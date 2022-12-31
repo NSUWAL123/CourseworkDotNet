@@ -1,0 +1,128 @@
+﻿@page "/request"
+
+<nav class="navbar navbar-light bg-light justify-content-between">
+    <h1 class="navbar-brand mb-0 h1">Pending Requests</h1>
+   
+   
+</nav>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <div class="d-flex">
+                    Item Name
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Quantity
+                </div>
+            </th>
+            
+            <th>
+                <div class="d-flex">
+                    Requested By
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Decision Made
+                </div>
+            </th>
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            IEnumerable<ItemRequest> inventoryList = _itemRequest;
+    
+            foreach (var InventoryItem in inventoryList)
+            {
+                <tr>                
+                    <td>@InventoryItem.ItemName</td>       
+                    <td>@InventoryItem.Quantity</td>
+                    <td>@InventoryItem.UserName</td>
+                    <td>@InventoryItem.ApprovalStatus</td>
+
+                    @{
+                        if (!@InventoryItem.ApprovalStatus) { 
+                        
+                        <td>
+                            <button class="btn btn-success" type="button" @onclick="() => ApproveRequest(InventoryItem)">
+                                <span class="oi oi-success" /> Approve
+                            </button>
+                            <button class="btn btn-danger mx-3" type="button" @onclick="() => DeclineRequest(InventoryItem)">
+                                <span class="oi oi-danger" /> Decline
+                            </button>
+                        </td>
+                        
+                        }
+                    }
+                    
+
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+
+
+@code {
+    [CascadingParameter]
+    private GlobalState _globalState { get; set; }
+    //private bool _showeditInventoryDialog { get; set; }
+    //private bool _showDeleteInventoryDialog { get; set; }
+    //private bool _showTakeInventoryDialog { get; set; } //////
+    private List<InventoryItem> _inventory { get; set; }
+    private List<ItemRequest> _itemRequest { get; set; }
+    private InventoryItem _deleteInventory { get; set; }
+    //private string _dialogTitle { get; set; }
+    //private string _dialogOkLabel { get; set; }
+    //private string _editInventoryErrorMessage { get; set; }
+    //private string _deleteInventoryErrorMessage { get; set; }
+    private InventoryItem _inventoryModel { get; set; }
+    //private string _tabFilter = "All";
+    //private string _sortBy = "dueDate";
+    //private string _sortDirection = "ascending";
+    private User _user;
+    private string _role;
+    //private int _takeQuantity;//////
+    //private string _takeInventoryErrorMessage { get; set; }
+
+
+
+
+    protected override void OnInitialized()
+    {
+        _itemRequest = InventoryService.GetAllRequestedItem();//_globalState.CurrentUser.Id
+        _user = UsersService.GetById(_globalState.CurrentUser.Id);
+        _role = _user.Role.ToString();
+    }
+
+
+    private void ApproveRequest(ItemRequest item) {
+        item.ApprovalStatus = true;
+        InventoryService.EditRequestedItem(item.Id,  item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus);
+    }
+
+    private void DeclineRequest(ItemRequest item)
+    {
+        item.ApprovalStatus = true;
+        InventoryService.RemoveRequestedItem(item.Id, item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus);
+    }
+
+}
+
+
+
+
+
+
+

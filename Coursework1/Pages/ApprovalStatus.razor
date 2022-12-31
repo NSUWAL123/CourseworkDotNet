@@ -1,4 +1,4 @@
-﻿@page "/inventory"
+﻿@page "/approval-status"
 
 <nav class="navbar navbar-light bg-light justify-content-between">
     <h1 class="navbar-brand mb-0 h1">Todos</h1>
@@ -31,11 +31,7 @@
             
             <th>
                 <div class="d-flex">
-                    Created At
-                    <a class='btn text-@(_sortBy == "createdAt" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
-                        @onclick='()=>SortByHandler("createdAt")'>
-                        <span class='oi oi-sort-@(_sortBy == "createdAt" ? _sortDirection : "ascending")' />
-                    </a>
+                    Status
                 </div>
             </th>
             <th></th>
@@ -60,25 +56,10 @@
                 <tr>                
                     <td>@InventoryItem.ItemName</td>       
                     <td>@InventoryItem.Quantity</td>
-                <td>
-
-                    <p class="small mb-0">
-                        @InventoryItem.CreatedAt.ToString("MMM dd, yyyy h:mm tt")
-                    </p>
-                </td>
+                <td></td>
                     
-                    <td>
-                        <button class="btn btn-outline-secondary @(_role == "User" ? "display-none" : "" )" type="button"
-                        @onclick="()=>OpenEditInventoryDialog(InventoryItem)">
-                        <span class="oi oi-pencil" /> Edit
-                    </button>
-                        <button class="btn btn-outline-danger @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteTodoDialog(InventoryItem)">
-                        <span class="oi oi-delete" /> Delete
-                    </button>
-                        <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" )" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
-                            <span class="oi oi-success" /> Take Item
-                        </button>
-                </td>
+                  
+               
 
             </tr>
             }
@@ -158,7 +139,8 @@
     private string _role;
     private int _takeQuantity;//////
     private string _takeInventoryErrorMessage { get; set; }
-    private string status { get; set; }
+    private bool approvalStatus;
+
 
 
 
@@ -167,7 +149,7 @@
         _inventory = InventoryService.GetAll();//_globalState.CurrentUser.Id
         _user = UsersService.GetById(_globalState.CurrentUser.Id);
         _role = _user.Role.ToString();
-
+        approvalStatus = false;
     }
 
     private void SortByHandler(string sortByName)
@@ -297,9 +279,7 @@
             {
                 var userId = _globalState.CurrentUser.Id;
                 var user = UsersService.GetById(userId);
-                var status = false;
-
-                _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, status);
+                _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, approvalStatus);
                 _showTakeInventoryDialog = false;
             }
             catch (Exception e)
@@ -307,7 +287,8 @@
                 _takeInventoryErrorMessage = e.Message;
             }
         }
-    }   
+    }
+    
 }
 
 

@@ -1,9 +1,14 @@
 ﻿@page "/inventory-log"
 
 <nav class="navbar navbar-light bg-light justify-content-between">
-    <h1 class="navbar-brand mb-0 h1">Inventory Log</h1>
+    
+    <h1 class="navbar-brand mb-0 h1">Inventory Log @(month.ToString() =="0" ? "Till Now": "for " + @month + "/" + @year)</h1>
 
-
+    <div>
+        <input type="month" @oninput="ShowLog" />
+        @*<button type="submit" onclick="">Get Log</button>*@
+    </div>
+    
 </nav>
 
 
@@ -55,16 +60,35 @@
                 t.ApprovedAt);
             }
 
-            foreach (var InventoryItem in inventoryList)
-            if (InventoryItem.ApprovalStatus)
-            {
-                <tr>
-                    <td>@InventoryItem.ItemName</td>
-                    <td>@InventoryItem.Quantity</td>
-                    <td>@InventoryItem.UserName</td>
-                    <td>@InventoryItem.Admin</td>
-                    <td>@InventoryItem.ApprovedAt.ToString("MMM dd, yyyy h:mm tt")</td>
-                </tr>
+            if (month == 0 && year == 0) {            
+                foreach (var InventoryItem in inventoryList) {
+                    if (InventoryItem.ApprovalStatus)
+                    {
+                                <tr>
+                                    <td>@InventoryItem.ItemName</td>
+                                    <td>@InventoryItem.Quantity</td>
+                                    <td>@InventoryItem.UserName</td>
+                                    <td>@InventoryItem.Admin</td>
+                                    <td>@InventoryItem.ApprovedAt.ToString("MMM dd, yyyy h:mm tt")</td>
+                                </tr>
+                    }
+                }
+            } else {
+                foreach (var InventoryItem in inventoryList) {
+                    if (month.ToString() == @InventoryItem.ApprovedAt.Month.ToString() && year.ToString() == @InventoryItem.ApprovedAt.Year.ToString())
+                    {
+                        if (InventoryItem.ApprovalStatus)
+                            {
+                                        <tr>
+                                            <td>@InventoryItem.ItemName</td>
+                                            <td>@InventoryItem.Quantity</td>
+                                            <td>@InventoryItem.UserName</td>
+                                            <td>@InventoryItem.Admin</td>
+                                            <td>@InventoryItem.ApprovedAt.ToString("MMM dd, yyyy h:mm tt")</td>
+                                        </tr>
+                            }                   
+                    }
+                }
             }
         }
     </tbody>
@@ -93,10 +117,10 @@
     private string _sortDirection = "ascending";
     private User _user;
     private string _role;
+    private int month;
+    private int year;
     //private int _takeQuantity;//////
     //private string _takeInventoryErrorMessage { get; set; }
-
-
 
 
     protected override void OnInitialized()
@@ -104,8 +128,19 @@
         _itemRequest = InventoryService.GetAllRequestedItem();//_globalState.CurrentUser.Id
         _user = UsersService.GetById(_globalState.CurrentUser.Id);
         _role = _user.Role.ToString();
+        month = 0;
+        year = 0;
     }
 
+    private void ShowLog(ChangeEventArgs e)
+    {
+        var searchTerm = Convert.ToDateTime(e.Value);
+        month = searchTerm.Month;
+        year = searchTerm.Year;
+        //_inventory = InventoryService.GetAll().Where(t => t.LastTakenOutOn.Month.ToString().Contains(month.ToString())).ToList();//_globalState.CurrentUser.Id
+        
+        
+    }
 
     private void SortByHandler(string sortByName)
     {

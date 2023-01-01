@@ -224,7 +224,7 @@
     private void SearchItemName(ChangeEventArgs e)
     {
         var searchTerm = e.Value.ToString();
-        if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length > 2)
+        if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length >= 1)
         {
             _inventory = InventoryService.GetAll().Where(t =>
             t.ItemName.ToLower().Contains(searchTerm.ToLower())).ToList();//_globalState.CurrentUser.Id

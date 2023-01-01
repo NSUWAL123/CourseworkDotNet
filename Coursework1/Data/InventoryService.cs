@@ -96,6 +96,23 @@ public static class InventoryService
         return inventory;
     }
 
+    public static List<InventoryItem> UpdateByName(string ItemName, DateTime LastTakenOutOn)//userId
+    {
+        List<InventoryItem> inventory = GetAll();//userId
+        InventoryItem inventoryUpdate = inventory.FirstOrDefault(x => x.ItemName == ItemName);
+
+        if (inventoryUpdate == null)
+        {
+            throw new Exception("inventorys not found.");
+        }
+
+        inventoryUpdate.LastTakenOutOn = LastTakenOutOn;
+        SaveAll(inventory);//userId
+        return inventory;
+    }
+
+
+
 
     public static List<ItemRequest> GetAllRequestedItem() //userId
     {
@@ -144,7 +161,7 @@ public static class InventoryService
     }
 
 
-    public static List<ItemRequest> EditRequestedItem(Guid id, string UserName, string ItemName, int Quantity, bool approvalStatus)//userId
+    public static List<ItemRequest> EditRequestedItem(Guid id, string UserName, string ItemName, int Quantity, bool approvalStatus, DateTime ApprovedAt, string Admin)//userId
     {
         List<ItemRequest> inventory = GetAllRequestedItem();//userId
         ItemRequest inventoryUpdate = inventory.FirstOrDefault(x => x.Id == id);
@@ -160,6 +177,8 @@ public static class InventoryService
 
         inventoryUpdate.ItemName = ItemName;
         inventoryUpdate.ApprovalStatus = approvalStatus;
+        inventoryUpdate.ApprovedAt = ApprovedAt;
+        inventoryUpdate.Admin = Admin;
 
         SaveAll(allItems);
         SaveAllRequestedItem(inventory);//userId
@@ -176,8 +195,8 @@ public static class InventoryService
             throw new Exception("inventorys not found.");
         }
 
-        inventoryUpdate.ApprovalStatus = approvalStatus;
-
+        //inventoryUpdate.ApprovalStatus = approvalStatus;
+        inventory.Remove(inventoryUpdate);
         SaveAllRequestedItem(inventory);//userId
         return inventory;
     }

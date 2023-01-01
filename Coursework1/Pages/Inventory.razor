@@ -1,7 +1,7 @@
 ﻿@page "/inventory"
 
 <nav class="navbar navbar-light bg-light justify-content-between">
-    <h1 class="navbar-brand mb-0 h1">Todos</h1>
+    <h1 class="navbar-brand mb-0 h1">Inventory</h1>
     <div class="d-flex">
         <input type="search" class="form-control search" placeholder="Search" @oninput="SearchItemName" />
         <a class='btn text-@(_sortBy == "ItemName" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
@@ -28,6 +28,8 @@
                     Quantity
                 </div>
             </th>
+
+            
             
             <th>
                 <div class="d-flex">
@@ -35,6 +37,15 @@
                     <a class='btn text-@(_sortBy == "createdAt" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
                         @onclick='()=>SortByHandler("createdAt")'>
                         <span class='oi oi-sort-@(_sortBy == "createdAt" ? _sortDirection : "ascending")' />
+                    </a>
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Last Taken Out On
+                    <a class='btn text-@(_sortBy == "lastTaken" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
+                       @onclick='()=>SortByHandler("lastTaken")'>
+                        <span class='oi oi-sort-@(_sortBy == "lastTaken" ? _sortDirection : "ascending")' />
                     </a>
                 </div>
             </th>
@@ -53,34 +64,52 @@
             {
                 inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.CreatedAt) : inventoryList.OrderByDescending(t =>
                 t.CreatedAt);
+            } else if (_sortBy == "lastTaken")
+            {
+                inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.LastTakenOutOn) : inventoryList.OrderByDescending(t =>
+                t.LastTakenOutOn);
             }
          
             foreach (var InventoryItem in inventoryList)
             {
-                <tr>                
-                    <td>@InventoryItem.ItemName</td>       
-                    <td>@InventoryItem.Quantity</td>
-                <td>
+                        <tr>                
+                            <td>@InventoryItem.ItemName</td>       
+                            <td>@InventoryItem.Quantity</td>
+                        <td>
 
-                    <p class="small mb-0">
-                        @InventoryItem.CreatedAt.ToString("MMM dd, yyyy h:mm tt")
-                    </p>
-                </td>
-                    
-                    <td>
-                        <button class="btn btn-outline-secondary @(_role == "User" ? "display-none" : "" )" type="button"
-                        @onclick="()=>OpenEditInventoryDialog(InventoryItem)">
-                        <span class="oi oi-pencil" /> Edit
-                    </button>
-                        <button class="btn btn-outline-danger @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteTodoDialog(InventoryItem)">
-                        <span class="oi oi-delete" /> Delete
-                    </button>
-                        <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" )" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
-                            <span class="oi oi-success" /> Take Item
-                        </button>
-                </td>
+                            <p class="small mb-0">
+                                @InventoryItem.CreatedAt.ToString("MMM dd, yyyy h:mm tt")
+                            </p>
+                        </td>
 
-            </tr>
+                            
+                        
+                            @if (InventoryItem.LastTakenOutOn == default(DateTime)) {
+                                <td>
+                                </td>
+                    } else {
+                            <td>
+                                @InventoryItem.LastTakenOutOn.ToString("MMM dd, yyyy h:mm tt")
+                            </td>
+                    }
+                            
+                            
+                            <td>
+                                <button class="btn btn-outline-secondary @(_role == "User" ? "display-none" : "" )" type="button"
+                                @onclick="()=>OpenEditInventoryDialog(InventoryItem)">
+                                <span class="oi oi-pencil" /> Edit
+                            </button>
+                                <button class="btn btn-outline-danger @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteTodoDialog(InventoryItem)">
+                                <span class="oi oi-delete" /> Delete
+                            </button>
+
+
+                        <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" ) @(Utils.CheckOpeningTime() ? "": "disabled")" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
+                                <span class="oi oi-success" /> Take Item
+                            </button>
+                        </td>
+
+                    </tr>
             }
         }
     </tbody>
@@ -299,7 +328,10 @@
                 var user = UsersService.GetById(userId);
                 var status = false;
 
-                _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, status);
+                if (Utils.CheckOpeningTime()) { 
+                    _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, status);
+               
+                }
                 _showTakeInventoryDialog = false;
             }
             catch (Exception e)

@@ -1,5 +1,131 @@
-﻿<h3>InventoryLog</h3>
+﻿@page "/inventory-log"
+
+<nav class="navbar navbar-light bg-light justify-content-between">
+    <h1 class="navbar-brand mb-0 h1">Inventory Log</h1>
+
+
+</nav>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <div class="d-flex">
+                    Item Name
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Quantity
+                </div>
+            </th>
+
+            <th>
+                <div class="d-flex">
+                    Taken By
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Approved By
+                </div>
+            </th>
+            <th>
+                <div class="d-flex">
+                    Date Taken
+                    <a class='btn text-@(_sortBy == "ApprovedAt" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
+                       @onclick='()=>SortByHandler("ApprovedAt")'>
+                        <span class='oi oi-sort-@(_sortBy == "ApprovedAt" ? _sortDirection : "ascending")' />
+                    </a>
+                </div>
+            </th>
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            IEnumerable<ItemRequest> inventoryList = _itemRequest;
+
+            if (_sortBy == "ApprovedAt")
+            {
+                inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.ApprovedAt) : inventoryList.OrderByDescending(t =>
+                t.ApprovedAt);
+            }
+
+            foreach (var InventoryItem in inventoryList)
+            if (InventoryItem.ApprovalStatus)
+            {
+                <tr>
+                    <td>@InventoryItem.ItemName</td>
+                    <td>@InventoryItem.Quantity</td>
+                    <td>@InventoryItem.UserName</td>
+                    <td>@InventoryItem.Admin</td>
+                    <td>@InventoryItem.ApprovedAt.ToString("MMM dd, yyyy h:mm tt")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+
 
 @code {
+    [CascadingParameter]
+    private GlobalState _globalState { get; set; }
+    //private bool _showeditInventoryDialog { get; set; }
+    //private bool _showDeleteInventoryDialog { get; set; }
+    //private bool _showTakeInventoryDialog { get; set; } //////
+    private List<InventoryItem> _inventory { get; set; }
+    private List<ItemRequest> _itemRequest { get; set; }
+    private InventoryItem _deleteInventory { get; set; }
+    //private string _dialogTitle { get; set; }
+    //private string _dialogOkLabel { get; set; }
+    //private string _editInventoryErrorMessage { get; set; }
+    //private string _deleteInventoryErrorMessage { get; set; }
+    private InventoryItem _inventoryModel { get; set; }
+    private string _tabFilter = "All";
+    private string _sortBy = "dueDate";
+    private string _sortDirection = "ascending";
+    private User _user;
+    private string _role;
+    //private int _takeQuantity;//////
+    //private string _takeInventoryErrorMessage { get; set; }
+
+
+
+
+    protected override void OnInitialized()
+    {
+        _itemRequest = InventoryService.GetAllRequestedItem();//_globalState.CurrentUser.Id
+        _user = UsersService.GetById(_globalState.CurrentUser.Id);
+        _role = _user.Role.ToString();
+    }
+
+
+    private void SortByHandler(string sortByName)
+    {
+        if (_sortBy == sortByName)
+        {
+            _sortDirection = _sortDirection == "ascending" ? "descending" : "ascending";
+        }
+        else
+        {
+            _sortBy = sortByName;
+            _sortDirection = "ascending";
+        }
+    }
+
 
 }
+
+
+
+
+
+
+

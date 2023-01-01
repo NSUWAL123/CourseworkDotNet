@@ -13,6 +13,8 @@ namespace Coursework1.Data
         public int Quantity { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public DateTime LastTakenOutOn { get; set; } 
     }
 
 
@@ -23,5 +25,9 @@ namespace Coursework1.Data
         public string ItemName { get; set; }
         public int Quantity { get; set; }
         public bool ApprovalStatus { get; set; }
+        
+        public DateTime ApprovedAt { get; set; } = DateTime.Now;
+
+        public string Admin { get; set; }
     }
 }

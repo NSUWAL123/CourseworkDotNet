@@ -42,6 +42,22 @@ public static class Utils
         return CryptographicOperations.FixedTimeEquals(inputHash, hash);
     }
 
+    public static bool CheckOpeningTime()
+    {
+        var currTime = DateTime.Now;
+        var StartTime = Convert.ToDateTime("09:00:00");
+        var EndTime = Convert.ToDateTime("17:00:00");
+        string currDay = DateTime.Now.DayOfWeek.ToString();
+        
+
+        if (currDay != "Saturday"  && currDay != "Sunday") { 
+            if (currTime >= StartTime && currTime <= EndTime) { 
+                return true;
+            }      
+        }
+        return false;
+    }
+
     public static string GetAppDirectoryPath()
     {
         return Path.Combine(

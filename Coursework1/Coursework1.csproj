@@ -50,6 +50,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="MudBlazor" Version="6.1.7" />
+    </ItemGroup>
+
+    <ItemGroup>
       <MauiXaml Update="Pages\NewContent1.xaml">
         <Generator>MSBuild:Compile</Generator>
       </MauiXaml>

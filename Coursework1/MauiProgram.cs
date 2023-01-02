@@ -1,4 +1,6 @@
-﻿namespace Coursework1;
+﻿using MudBlazor.Services;
+
+namespace Coursework1;
 
 public static class MauiProgram
 {
@@ -13,6 +15,7 @@ public static class MauiProgram
             });
 
         builder.Services.AddMauiBlazorWebView();
+        builder.Services.AddMudServices();
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
 #endif

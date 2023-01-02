@@ -46,7 +46,7 @@ public static class Utils
     {
         var currTime = DateTime.Now;
         var StartTime = Convert.ToDateTime("09:00:00");
-        var EndTime = Convert.ToDateTime("17:00:00");
+        var EndTime = Convert.ToDateTime("23:00:00");
         string currDay = DateTime.Now.DayOfWeek.ToString();
         
 
@@ -78,6 +78,11 @@ public static class Utils
 
     public static string GetItemRequestFilePath()//userId
     {
-        return Path.Combine(GetAppDirectoryPath(), "_item_request_demo.json");
+        return Path.Combine(GetAppDirectoryPath(), "_item_request_demo1.json");
+    }
+
+    public static string ItemsTakenOutDataFilePath()//userId
+    {
+        return Path.Combine(GetAppDirectoryPath(), "_item_taken_out_demo.json");
     }
 }

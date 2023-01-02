@@ -96,6 +96,7 @@
             item.Admin = _user.Username;
             InventoryService.UpdateByName(item.ItemName, item.ApprovedAt);
             InventoryService.EditRequestedItem(item.Id,  item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus, item.ApprovedAt, item.Admin);
+            GraphService.Create(item.ItemName, item.Quantity);
         }
 
     }
@@ -110,6 +111,10 @@
             InventoryService.RemoveRequestedItem(item.Id, item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus);
         }
     }
+
+
+
+    
 
 }
 

@@ -44,6 +44,15 @@
             </div>
         }
 
+        @if (UserRole == Role.Admin)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="view-graph">
+                    <span class="oi" /> View Graph
+                </NavLink>
+            </div>
+        }
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="change-password">
                 <span class="oi oi-key" /> Change Password

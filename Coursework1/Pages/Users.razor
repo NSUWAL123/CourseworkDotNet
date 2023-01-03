@@ -1,19 +1,18 @@
 ﻿@page "/users"
 
-<nav class="navbar navbar-light bg-light justify-content-between">
-    <h1 class="navbar-brand mb-0 h1">Users</h1>
-    <button class="btn btn-primary" type="button" @onclick="OpenAddUserDialog">
-        <span class="oi oi-plus" /> Add
+<nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
+    <h1 class="navbar-brand mb-0 h1"><b>Staff Record</b></h1>
+    <button class="btn btn-success" type="button" @onclick="OpenAddUserDialog">
+        <span class="oi oi-plus mx-1" /><b>Add</b>
     </button>
 </nav>
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
+            <th>Staff Name</th>
             <th>Role</th>
             <th>Created At</th>
             <th>CreatedBy</th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -31,8 +30,8 @@
                 </td>
                 <td>
                     <button disabled="@(_globalState.CurrentUser != null ? _globalState.CurrentUser.Id == user.Id : false)"
-                    class="btn btn-outline-danger" type="button" @onclick="()=>OpenDeleteUserDialog(user)">
-                        <span class="oi oi-delete" /> Delete
+                    class="btn btn-danger" type="button" @onclick="()=>OpenDeleteUserDialog(user)">
+                        <span class="oi oi-delete mx-2" /><b>Delete</b>
                     </button>
                 </td>
             </tr>

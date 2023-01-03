@@ -1,4 +1,4 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark mt-5">
     <div class="container-fluid">
         <a class="navbar-brand" href=""><h3>BIKE <span class="nav-span">SER</span>VICES</h3></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -9,11 +9,11 @@
 
 <div class='@(_collapseNavMenu ? "collapse" : "")' @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3"><h5 class="text-light">Welcome <strong>@Username</strong>!</h5></div>
+        <div class="nav-item px-3 mx-3"><h5 class="text-light">Welcome <strong>@Username</strong>!</h5></div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="inventory">
-                <span class="oi oi-list-rich" /> Inventory
+                <span class="oi oi-list-rich" /><b>Inventory</b>
             </NavLink>
         </div>
 
@@ -21,7 +21,7 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="inventory-log">
-                    <span class="oi" /> Inventory Log
+                    <span class="oi oi-spreadsheet" /><b>Inventory Log</b>
                 </NavLink>
             </div>
         }
@@ -30,7 +30,7 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="users">
-                    <span class="oi oi-person" /> Staff
+                    <span class="oi oi-person" /><b>Manage Staff</b>
                 </NavLink>
             </div>
         }
@@ -39,7 +39,7 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="request">
-                    <span class="oi" /> Request
+                    <span class="oi oi-bell" /><b>Pending Approval</b>
                 </NavLink>
             </div>
         }
@@ -48,19 +48,19 @@
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="graph">
-                    <span class="oi" /> View Graph
+                    <span class="oi oi-bar-chart" /><b>View Chart</b>
                 </NavLink>
             </div>
         }
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="change-password">
-                <span class="oi oi-key" /> Change Password
+                <span class="oi oi-key" /><b>Change Password</b>
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link text-danger" role="button" @onclick="LogoutHandler">
-                <span class="oi oi-account-logout" /> Logout
+        <div class="nav-item px-3 logout-btn mt-5">
+            <NavLink class="nav-link text-white bg-danger px-16" role="button" @onclick="LogoutHandler">
+                <span class="oi oi-account-logout" /><b>Logout</b>
             </NavLink>
         </div>
     </nav>

@@ -1,9 +1,7 @@
 ﻿@page "/request"
 
-<nav class="navbar navbar-light bg-light justify-content-between">
-    <h1 class="navbar-brand mb-0 h1">Pending Requests</h1>
-   
-   
+<nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
+    <h1 class="navbar-brand mb-0 h1"><b>Pending Approvals</b></h1>
 </nav>
 
 
@@ -20,15 +18,10 @@
                     Quantity
                 </div>
             </th>
-            
+
             <th>
                 <div class="d-flex">
                     Requested By
-                </div>
-            </th>
-            <th>
-                <div class="d-flex">
-                    Decision Made
                 </div>
             </th>
             <th>
@@ -43,67 +36,57 @@
             foreach (var InventoryItem in inventoryList)
             {
 
-                if (!InventoryItem.ApprovalStatus) { 
-                <tr>                
-                    <td>@InventoryItem.ItemName</td>       
-                    <td>@InventoryItem.Quantity</td>
-                    <td>@InventoryItem.UserName</td>
-                    <td>@InventoryItem.ApprovalStatus</td>
-
-                  
-                        
+                if (!InventoryItem.ApprovalStatus)
+                {
+                    <tr>
+                        <td>@InventoryItem.ItemName</td>
+                        <td>@InventoryItem.Quantity</td>
+                        <td>@InventoryItem.UserName</td>
                         <td>
-                            <button class="btn btn-success  @(Utils.CheckOpeningTime() ? "": "disabled")" type="button" @onclick="() => ApproveRequest(InventoryItem)">
+                            <button class="btn btn-success  @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => ApproveRequest(InventoryItem)">
                                 <span class="oi oi-success" /> Approve
                             </button>
-                            <button class="btn btn-danger mx-3 @(Utils.CheckOpeningTime() ? "": "disabled")" type="button" @onclick="() => DeclineRequest(InventoryItem)">
+                            <button class="btn btn-danger mx-3 @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => DeclineRequest(InventoryItem)">
                                 <span class="oi oi-danger" /> Decline
                             </button>
                         </td>
-                </tr>
+                    </tr>
                 }
             }
         }
     </tbody>
 </table>
 
-
-
-
-
 @code {
     [CascadingParameter]
     private GlobalState _globalState { get; set; }
-    private List<InventoryItem> _inventory { get; set; }
     private List<ItemRequest> _itemRequest { get; set; }
-    private InventoryItem _deleteInventory { get; set; }
-    private InventoryItem _inventoryModel { get; set; }
     private User _user;
     private string _role;
 
     protected override void OnInitialized()
     {
-        _itemRequest = InventoryService.GetAllRequestedItem();//_globalState.CurrentUser.Id
+        _itemRequest = InventoryService.GetAllRequestedItem();
         _user = UsersService.GetById(_globalState.CurrentUser.Id);
         _role = _user.Role.ToString();
     }
 
-
-    private void ApproveRequest(ItemRequest item) {
-        if (Utils.CheckOpeningTime()) { 
+    private void ApproveRequest(ItemRequest item)
+    {
+        if (Utils.CheckInventoryOpeningTime())
+        {
             item.ApprovalStatus = true;
             item.ApprovedAt = DateTime.Now;
             item.Admin = _user.Username;
             InventoryService.UpdateByName(item.ItemName, item.ApprovedAt);
-            InventoryService.EditRequestedItem(item.Id,  item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus, item.ApprovedAt, item.Admin);
-            GraphService.Create(item.ItemName, item.Quantity);
+            InventoryService.EditRequestedItem(item.Id, item.UserName, item.ItemName, item.Quantity, item.ApprovalStatus, item.ApprovedAt, item.Admin);
         }
 
     }
 
     private void DeclineRequest(ItemRequest item)
     {
-        if (Utils.CheckOpeningTime())
+        if (Utils.CheckInventoryOpeningTime())
         {
             item.ApprovalStatus = true;
             item.Quantity = 0;
@@ -114,7 +97,7 @@
 
 
 
-    
+
 
 }
 

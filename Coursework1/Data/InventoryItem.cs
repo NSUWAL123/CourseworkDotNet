@@ -24,10 +24,8 @@ namespace Coursework1.Data
         public string UserName { get; set; }
         public string ItemName { get; set; }
         public int Quantity { get; set; }
-        public bool ApprovalStatus { get; set; }
-        
+        public bool ApprovalStatus { get; set; }      
         public DateTime ApprovedAt { get; set; } = DateTime.Now;
-
         public string Admin { get; set; }
     }
 }

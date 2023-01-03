@@ -2,6 +2,10 @@
 
 @using System.Linq
 
+<nav class="navbar navbar-light px-5 rounded-3 justify-content-between mb-5">
+    <h1 class="navbar-brand mb-0 h1"><b>Bar Graph of Each Items Taken Out</b></h1>
+</nav>
+
 <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px">
     <CustomGraphics>
         <style>
@@ -14,6 +18,10 @@
                 fill: rgb(62,44,221);
             }
         </style>
+        
+        <text x="-60" y="185" class="light">🠕</text>
+        <text x="-80" y="205" class="light">Number</text>
+        <text x="-80" y="225" class="light">Taken Out</text>
     </CustomGraphics>
 </MudChart>
 
@@ -41,7 +49,7 @@
         {
             new ChartSeries()
         {
-            Name = "Item Name",
+            Name = "Item Name ➜",
             Data = groupedItems.Select(item => Convert.ToDouble(item.Quantity)).ToArray()
 }
         };

@@ -22,10 +22,11 @@
     margin-bottom: -1px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
+    margin-bottom: 25px;
 }
 
 .form-login .password {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }

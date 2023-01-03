@@ -42,18 +42,20 @@ public static class Utils
         return CryptographicOperations.FixedTimeEquals(inputHash, hash);
     }
 
-    public static bool CheckOpeningTime()
+    public static bool CheckInventoryOpeningTime()
     {
-        var currTime = DateTime.Now;
+        var CurrentTime = DateTime.Now;
         var StartTime = Convert.ToDateTime("09:00:00");
-        var EndTime = Convert.ToDateTime("23:00:00");
-        string currDay = DateTime.Now.DayOfWeek.ToString();
-        
+        var EndTime = Convert.ToDateTime("17:00:00");
+        string Today = DateTime.Now.DayOfWeek.ToString();
 
-        if (currDay != "Saturday"  && currDay != "Sunday") { 
-            if (currTime >= StartTime && currTime <= EndTime) { 
+
+        if (Today != "Saturday" && Today != "Sunday")
+        {
+            if (CurrentTime >= StartTime && CurrentTime <= EndTime)
+            {
                 return true;
-            }      
+            }
         }
         return false;
     }
@@ -66,12 +68,12 @@ public static class Utils
         );
     }
 
-    public static string GetAppUsersFilePath()
+    public static string GetStaffRecordFilePath()
     {
         return Path.Combine(GetAppDirectoryPath(), "users.json");
     }
 
-    public static string GetinventoryFilePath()//userId
+    public static string GetInventoryRecordFilePath()//userId
     {
         return Path.Combine(GetAppDirectoryPath(), "_inventory.json");
     }
@@ -81,7 +83,7 @@ public static class Utils
         return Path.Combine(GetAppDirectoryPath(), "_item_request_demo1.json");
     }
 
-    public static string ItemsTakenOutDataFilePath()//userId
+    public static string ItemsTakenOutRecordFilePath()//userId
     {
         return Path.Combine(GetAppDirectoryPath(), "_item_taken_out_demo.json");
     }

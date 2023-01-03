@@ -64,3 +64,8 @@
 .nav-span {
     color: #C52525
 }
+
+.logout-btn {
+    display: flex;
+    justify-content: center;
+}

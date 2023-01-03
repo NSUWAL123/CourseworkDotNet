@@ -1,26 +1,25 @@
 ﻿@page "/inventory"
 
-<nav class="navbar navbar-light bg-light justify-content-between">
-    <h1 class="navbar-brand mb-0 h1">Inventory</h1>
+<nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
+    <h1 class="navbar-brand mb-0"><b>Inventory</b></h1>
     <div class="d-flex">
-        <input type="search" class="form-control search" placeholder="Search" @oninput="SearchItemName" />
+        <input type="search" class="form-control search border-0" placeholder="Search by Item Name" @oninput="SearchItemName" />
         <a class='btn text-@(_sortBy == "ItemName" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
            @onclick='()=>SortByHandler("ItemName")'>
             <span class='oi oi-sort-@(_sortBy == "ItemName" ? _sortDirection : "ascending")' />
         </a>
     </div>
-    <button class='btn btn-primary @(_role == "User" ? "display-none" : "" )' type="button" @onclick="OpenAddTodoDialog">
-        <span class="oi oi-plus" /> Add Item
+    <button class='btn btn-success @(_role == "User" ? "display-none" : "" )' type="button" @onclick="OpenAddItemDialog">
+        <span class="oi oi-plus mx-1" /><b class="mx-1">Add Item</b>
     </button>
 </nav>
-
 
 <table class="table">
     <thead>
         <tr>
             <th>
                 <div class="d-flex">
-                    Item Name
+                    Item
                 </div>
             </th>
             <th>
@@ -28,14 +27,11 @@
                     Quantity
                 </div>
             </th>
-
-            
-            
             <th>
                 <div class="d-flex">
                     Created At
                     <a class='btn text-@(_sortBy == "createdAt" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
-                        @onclick='()=>SortByHandler("createdAt")'>
+                       @onclick='()=>SortByHandler("createdAt")'>
                         <span class='oi oi-sort-@(_sortBy == "createdAt" ? _sortDirection : "ascending")' />
                     </a>
                 </div>
@@ -55,61 +51,61 @@
     <tbody>
         @{
             IEnumerable<InventoryItem> inventoryList = _inventory;
-           if (_sortBy == "ItemName")
+            if (_sortBy == "ItemName")
             {
                 inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.ItemName) : inventoryList.OrderByDescending(t =>
                 t.ItemName);
-            }          
+            }
             else if (_sortBy == "createdAt")
             {
                 inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.CreatedAt) : inventoryList.OrderByDescending(t =>
                 t.CreatedAt);
-            } else if (_sortBy == "lastTaken")
+            }
+            else if (_sortBy == "lastTaken")
             {
                 inventoryList = _sortDirection == "ascending" ? inventoryList.OrderBy(t => t.LastTakenOutOn) : inventoryList.OrderByDescending(t =>
                 t.LastTakenOutOn);
             }
-         
+
             foreach (var InventoryItem in inventoryList)
             {
-                        <tr>                
-                            <td>@InventoryItem.ItemName</td>       
-                            <td>@InventoryItem.Quantity</td>
-                        <td>
+                if (InventoryItem.Quantity > 0)
+                {
 
+
+                    <tr>
+                        <td><b>@InventoryItem.ItemName</b></td>
+                        <td>@InventoryItem.Quantity</td>
+                        <td>
                             <p class="small mb-0">
                                 @InventoryItem.CreatedAt.ToString("MMM dd, yyyy h:mm tt")
                             </p>
                         </td>
 
-                            
-                        
-                            @if (InventoryItem.LastTakenOutOn == default(DateTime)) {
-                                <td>
-                                </td>
-                    } else {
+                        @if (InventoryItem.LastTakenOutOn == default(DateTime))
+                        {
+                            <td>
+                            </td>
+                        }
+                        else
+                        {
                             <td>
                                 @InventoryItem.LastTakenOutOn.ToString("MMM dd, yyyy h:mm tt")
                             </td>
-                    }
-                            
-                            
-                            <td>
-                                <button class="btn btn-outline-secondary @(_role == "User" ? "display-none" : "" )" type="button"
-                                @onclick="()=>OpenEditInventoryDialog(InventoryItem)">
-                                <span class="oi oi-pencil" /> Edit
-                            </button>
-                                <button class="btn btn-outline-danger @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteTodoDialog(InventoryItem)">
-                                <span class="oi oi-delete" /> Delete
+                        }
+                        <td>
+
+                            <button class="btn btn-danger mx-2 @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteItemDialog(InventoryItem)">
+                                <span class="oi oi-delete mx-1" /><b>Delete</b>
                             </button>
 
 
-                        <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" ) @(Utils.CheckOpeningTime() ? "": "disabled")" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
-                                <span class="oi oi-success" /> Take Item
+                            <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" ) @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
+                                <span class="oi oi-success" /><b>Take Item</b>
                             </button>
                         </td>
-
                     </tr>
+                }
             }
         }
     </tbody>
@@ -118,46 +114,19 @@
 @if (_showeditInventoryDialog)
 {
     <ModalDialog Title="@_dialogTitle" OnClose="@OneditInventoryDialogClose" OkLabel="@_dialogOkLabel">
-    <div class="form-floating">
-        <input id="itemName" type="text" class="form-control" @bind="_inventoryModel.ItemName" placeholder="Item Name" />
+        <div class="form-floating">
+            <input id="itemName" type="text" class="form-control" @bind="_inventoryModel.ItemName" placeholder="Item Name" />
             <label for="itemName">Item Name</label>
-    </div>
+        </div>
         <div class="form-floating">
-            <input id="Quantity" type="text" class="form-control" @bind="_inventoryModel.Quantity" placeholder="Task Name" />
+            <input id="Quantity" type="number" class="form-control" @bind="_inventoryModel.Quantity" placeholder="Task Name" />
             <label for="Quantity">Quantity</label>
         </div>
 
-    @if (!string.IsNullOrEmpty(_editInventoryErrorMessage))
+        @if (_inventoryModel.ItemName == "")
         {
-            <AlertMessage Type="danger" Message="@_editInventoryErrorMessage" />
+            <AlertMessage Type="danger" Message="Please enter an item name." />
         }
-        </ModalDialog>
-}
-
-@if (_showDeleteInventoryDialog)
-{
-    <ModalDialog Title="Delete Item" OnClose="@OnDeleteInventoryDialogClose" OkLabel="Confirm">
-    <p>Are you sure you want to delete <strong>@_deleteInventory.ItemName</strong> item?</p>
-    @if (!string.IsNullOrEmpty(_deleteInventoryErrorMessage))
-        {
-            <AlertMessage Type="danger" Message="@_deleteInventoryErrorMessage" />
-        }
-        </ModalDialog>
-}
-
-
-@if (_showTakeInventoryDialog)
-{
-    <ModalDialog Title="@_dialogTitle" OnClose="@OnTakeInventoryDialogClose" OkLabel="@_dialogOkLabel">
-        <div class="form-floating">
-            @*<input id="itemName" type="text" class="form-control" @bind="_inventoryModel.ItemName" placeholder="Item Name" />*@
-            <p id="itemName"><b>Item Name:</b> @_inventoryModel.ItemName</p>
-            @*<label for="itemName">Item Name</label>*@
-        </div>
-        <div class="form-floating">
-            <input id="Quantity" type="text" class="form-control" @bind="_takeQuantity" placeholder="Quantity" />
-            <label for="Quantity">Quantity</label>
-        </div>
 
         @if (!string.IsNullOrEmpty(_editInventoryErrorMessage))
         {
@@ -166,12 +135,43 @@
     </ModalDialog>
 }
 
+@if (_showDeleteInventoryDialog)
+{
+    <ModalDialog Title="Delete Item" OnClose="@OnDeleteInventoryDialogClose" OkLabel="Confirm">
+        <p>Are you sure you want to delete <strong>@_deleteInventory.ItemName</strong> item?</p>
+        @if (!string.IsNullOrEmpty(_deleteInventoryErrorMessage))
+        {
+            <AlertMessage Type="danger" Message="@_deleteInventoryErrorMessage" />
+        }
+    </ModalDialog>
+}
+
+@if (_showTakeInventoryDialog)
+{
+    <ModalDialog Title="@_dialogTitle" OnClose="@OnTakeInventoryDialogClose" OkLabel="@_dialogOkLabel">
+        <div class="form-floating">
+            <p id="itemName"><b>Item Name:</b> @_inventoryModel.ItemName</p>
+        </div>
+        <div class="form-floating">
+            <input id="Quantity" type="number" class="form-control" @bind="_takeQuantity" placeholder="Quantity" />
+            <label for="Quantity">Quantity</label>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_takeInventoryErrorMessage))
+        {
+            <AlertMessage Type="danger" Message="@_takeInventoryErrorMessage" />
+        }
+
+
+    </ModalDialog>
+}
+
 @code {
     [CascadingParameter]
     private GlobalState _globalState { get; set; }
     private bool _showeditInventoryDialog { get; set; }
     private bool _showDeleteInventoryDialog { get; set; }
-    private bool _showTakeInventoryDialog { get; set; } //////
+    private bool _showTakeInventoryDialog { get; set; }
     private List<InventoryItem> _inventory { get; set; }
     private List<ItemRequest> _itemRequest { get; set; }
     private InventoryItem _deleteInventory { get; set; }
@@ -180,23 +180,19 @@
     private string _editInventoryErrorMessage { get; set; }
     private string _deleteInventoryErrorMessage { get; set; }
     private InventoryItem _inventoryModel { get; set; }
-    private string _tabFilter = "All";
     private string _sortBy = "dueDate";
     private string _sortDirection = "ascending";
     private User _user;
     private string _role;
-    private int _takeQuantity;//////
+    private int _takeQuantity;
     private string _takeInventoryErrorMessage { get; set; }
     private string status { get; set; }
 
-
-
     protected override void OnInitialized()
     {
-        _inventory = InventoryService.GetAll();//_globalState.CurrentUser.Id
+        _inventory = InventoryService.GetAll();
         _user = UsersService.GetById(_globalState.CurrentUser.Id);
         _role = _user.Role.ToString();
-
     }
 
     private void SortByHandler(string sortByName)
@@ -212,7 +208,7 @@
         }
     }
 
-    private void OpenAddTodoDialog()
+    private void OpenAddItemDialog()
     {
         _dialogTitle = "Add Item";
         _dialogOkLabel = "Add";
@@ -227,15 +223,14 @@
         if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length >= 1)
         {
             _inventory = InventoryService.GetAll().Where(t =>
-            t.ItemName.ToLower().Contains(searchTerm.ToLower())).ToList();//_globalState.CurrentUser.Id
+            t.ItemName.ToLower().Contains(searchTerm.ToLower())).ToList();
         }
         else
         {
-            _inventory = InventoryService.GetAll();//_globalState.CurrentUser.Id
+            _inventory = InventoryService.GetAll();
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////
     private void OpenEditInventoryDialog(InventoryItem editInventory)
     {
         _dialogTitle = "Edit Item";
@@ -244,14 +239,6 @@
         _showeditInventoryDialog = true;
     }
 
-    private void OpenDeleteTodoDialog(InventoryItem InventoryItem)
-    {
-        _deleteInventory = InventoryItem;
-        _showDeleteInventoryDialog = true;
-    }
-
-
-    //////////////////////////////////////////////////////////////////////////
     private void OneditInventoryDialogClose(bool isCancel)
     {
         if (isCancel)
@@ -265,11 +252,11 @@
                 _editInventoryErrorMessage = "";
                 if (_inventoryModel.Id == Guid.Empty)
                 {
-                    _inventory = InventoryService.Create( _inventoryModel.ItemName, _inventoryModel.Quantity);//_globalState.CurrentUser.Id
+                    _inventory = InventoryService.Create(_inventoryModel.ItemName, _inventoryModel.Quantity);
                 }
                 else
                 {
-                    _inventory = InventoryService.Update( _inventoryModel.Id, _inventoryModel.ItemName, _inventoryModel.Quantity);//_globalState.CurrentUser.Id
+                    _inventory = InventoryService.Update(_inventoryModel.Id, _inventoryModel.ItemName, _inventoryModel.Quantity);
                 }
                 _showeditInventoryDialog = false;
             }
@@ -278,6 +265,12 @@
                 _editInventoryErrorMessage = e.Message;
             }
         }
+    }
+
+    private void OpenDeleteItemDialog(InventoryItem InventoryItem)
+    {
+        _deleteInventory = InventoryItem;
+        _showDeleteInventoryDialog = true;
     }
 
     private void OnDeleteInventoryDialogClose(bool isCancel)
@@ -293,7 +286,7 @@
             try
             {
                 _deleteInventoryErrorMessage = "";
-                _inventory = InventoryService.Delete( _deleteInventory.Id); //_globalState.CurrentUser.Id
+                _inventory = InventoryService.Delete(_deleteInventory.Id);
                 _showDeleteInventoryDialog = false;
                 _deleteInventory = null;
             }
@@ -304,14 +297,14 @@
         }
     }
 
-
-
     private void OpenTakeItemDialog(InventoryItem takeInventory)
     {
         _dialogTitle = "Take Item";
         _dialogOkLabel = "Take";
         _inventoryModel = takeInventory;
         _showTakeInventoryDialog = true;
+        _takeQuantity = 0;
+        _takeInventoryErrorMessage = "";
     }
 
     private void OnTakeInventoryDialogClose(bool isCancel)
@@ -328,19 +321,24 @@
                 var user = UsersService.GetById(userId);
                 var status = false;
 
-                if (Utils.CheckOpeningTime()) { 
-                    _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, status);
-               
+                if (InventoryService.IsValid(_inventoryModel.Quantity, _takeQuantity, _inventoryModel.ItemName))
+                {
+                    if (Utils.CheckInventoryOpeningTime())
+                    {
+                        _itemRequest = InventoryService.CreateRequestItem(user.Username, _inventoryModel.ItemName, _takeQuantity, status);
+                    }
+                    _showTakeInventoryDialog = false;
+                    
                 }
-                _showTakeInventoryDialog = false;
             }
             catch (Exception e)
             {
                 _takeInventoryErrorMessage = e.Message;
             }
         }
-    }   
+    }
 }
+
 
 
 

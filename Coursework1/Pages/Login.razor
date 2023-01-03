@@ -2,18 +2,9 @@
 @inject NavigationManager NavManager
 
 <div class="login-body">
-    <div class="form-login">
+    <div class="form-login ">
         <form class="text-center" @onsubmit="LoginHandler">
-            <img class="mb-4" src="/appicon.png" alt="" height="72">
-            <h1 class="h3 mb-3 fw-normal">Please Login</h1>
-            @if (_showDefaultCredentials)
-            {
-                <div class="alert alert-info" role="alert">
-                    Username: <strong>@UsersService.SeedUsername</strong><br />
-                    Password: <strong>@UsersService.SeedPassword</strong>
-                </div>
-            }
-
+            <h1 class="h1 mb-5 fw-normal"><b>LOGIN</b></h1>
             <div class="form-floating">
                 <input type="text" class="form-control username" @bind="_username" placeholder="Username" />
                 <label for="floatingInput">Username</label>
@@ -26,8 +17,8 @@
             {
                 <AlertMessage Type="danger" Message="@_errorMessage" />
             }
-            <button class="w-100 btn btn-lg btn-primary" type="submit">
-                <span class="oi oi-account-login"></span> Login
+            <button class="w-100 btn btn-lg btn-danger" type="submit">
+                <span class="oi oi-account-login mr-2"></span> Login
             </button>
         </form>
     </div>
@@ -36,23 +27,9 @@
 @code {
     [CascadingParameter]
     private GlobalState _globalState { get; set; }
-    private bool _showDefaultCredentials { get; set; }
     private string _username { get; set; }
     private string _password { get; set; }
     private string _errorMessage = "";
-
-    protected override void OnInitialized()
-    {
-        try
-        {
-            var user = UsersService.Login(UsersService.SeedUsername, UsersService.SeedPassword);
-            _showDefaultCredentials = user.HasInitialPassword;
-        }
-        catch { }
-
-        _globalState.CurrentUser = null;
-        _errorMessage = "";
-    }
 
     private void LoginHandler()
     {

@@ -10,7 +10,7 @@ public static class UsersService
     private static void SaveAll(List<User> users)
     {
         string appDataDirectoryPath = Utils.GetAppDirectoryPath();
-        string appUsersFilePath = Utils.GetAppUsersFilePath();
+        string appUsersFilePath = Utils.GetStaffRecordFilePath();
 
         if (!Directory.Exists(appDataDirectoryPath))
         {
@@ -23,7 +23,7 @@ public static class UsersService
 
     public static List<User> GetAll()
     {
-        string appUsersFilePath = Utils.GetAppUsersFilePath();
+        string appUsersFilePath = Utils.GetStaffRecordFilePath();
         if (!File.Exists(appUsersFilePath))
         {
             return new List<User>();
@@ -93,7 +93,6 @@ public static class UsersService
             throw new Exception("User not found.");
         }
 
-        //TodosService.DeleteByUserId(id);
         users.Remove(user);
         SaveAll(users);
 

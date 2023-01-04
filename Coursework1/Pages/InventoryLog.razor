@@ -1,7 +1,7 @@
 ﻿@page "/inventory-log"
 
 <nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
-    <h1 class="navbar-brand mb-0 h1"><b>Inventory Log @(month.ToString() == "0" ? "of all Months" : "of " + getFullMonth(month) + " " + @year)</b></h1>
+    <h1 class="navbar-brand mb-0 h1"><b>Inventory Log @(month.ToString() == "0" ? "of all Months" : "of " + getFullMonth(month) + " " + @year)</b></h1> @*conditional rendering of topic*@
     <div>
         <input type="month" @oninput="ShowLog" class="p-1 rounded-3" />
     </div>
@@ -56,11 +56,11 @@
                 t.ApprovedAt);
             }
 
-            if (month == 0 && year == 0)
+            if (month == 0 && year == 0) //show all the logs if month has not been selected
             {
                 foreach (var InventoryItem in inventoryList)
                 {
-                    if (InventoryItem.ApprovalStatus)
+                    if (InventoryItem.ApprovalStatus) //only displays logs if the item is approved by the admin
                     {
                         <tr>
                             <td>@InventoryItem.ItemName</td>
@@ -72,13 +72,13 @@
                     }
                 }
             }
-            else
+            else //executes if any month and year is chosen
             {
                 foreach (var InventoryItem in inventoryList)
                 {
-                    if (month.ToString() == @InventoryItem.ApprovedAt.Month.ToString() && year.ToString() == @InventoryItem.ApprovedAt.Year.ToString())
+                    if (month.ToString() == @InventoryItem.ApprovedAt.Month.ToString() && year.ToString() == @InventoryItem.ApprovedAt.Year.ToString()) //only executes the log of the selected month and year
                     {
-                        if (InventoryItem.ApprovalStatus)
+                        if (InventoryItem.ApprovalStatus) //only displays logs if the item is approved by the admin
                         {
                             <tr>
                                 <td>@InventoryItem.ItemName</td>

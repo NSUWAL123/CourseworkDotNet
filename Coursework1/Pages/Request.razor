@@ -2,6 +2,10 @@
 
 <nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
     <h1 class="navbar-brand mb-0 h1"><b>Pending Approvals</b></h1>
+    @if (!Utils.CheckInventoryOpeningTime())
+    {
+        <p class="text-danger"><b>Items can only be approved or declined between 9AM-4PM from Mon-Fri!</b></p>
+    }
 </nav>
 
 
@@ -36,17 +40,17 @@
             foreach (var InventoryItem in inventoryList)
             {
 
-                if (!InventoryItem.ApprovalStatus)
+                if (!InventoryItem.ApprovalStatus) //displays the requested items that are yet to be approved or declined
                 {
                     <tr>
                         <td>@InventoryItem.ItemName</td>
                         <td>@InventoryItem.Quantity</td>
                         <td>@InventoryItem.UserName</td>
                         <td>
-                            <button class="btn btn-success  @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => ApproveRequest(InventoryItem)">
+                            <button class="btn btn-success  @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => ApproveRequest(InventoryItem)"> @*buttons are disabled on closing time of inventory*@
                                 <span class="oi oi-success" /> Approve
                             </button>
-                            <button class="btn btn-danger mx-3 @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => DeclineRequest(InventoryItem)">
+                            <button class="btn btn-danger mx-3 @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="() => DeclineRequest(InventoryItem)">  @*buttons are disabled on closing time of inventory*@
                                 <span class="oi oi-danger" /> Decline
                             </button>
                         </td>

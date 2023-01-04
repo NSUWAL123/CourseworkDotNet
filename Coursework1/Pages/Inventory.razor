@@ -2,6 +2,12 @@
 
 <nav class="navbar navbar-light px-5 rounded-3 justify-content-between">
     <h1 class="navbar-brand mb-0"><b>Inventory</b></h1>
+
+    @*Displays following text if inventory is not opened*@
+    @if (!Utils.CheckInventoryOpeningTime() && _role == "User") {
+        <p class="text-danger"><b>Items can only be reqeusted between 9AM-4PM from Mon-Fri!</b></p>
+    }
+
     <div class="d-flex">
         <input type="search" class="form-control search border-0" placeholder="Search by Item Name" @oninput="SearchItemName" />
         <a class='btn text-@(_sortBy == "ItemName" ? "primary" : "secondary")' data-mdb-toggle="tooltip"
@@ -69,10 +75,8 @@
 
             foreach (var InventoryItem in inventoryList)
             {
-                if (InventoryItem.Quantity > 0)
+                if (InventoryItem.Quantity > 0) //only displaying items to the inventory section if quantity of the items is more than 0
                 {
-
-
                     <tr>
                         <td><b>@InventoryItem.ItemName</b></td>
                         <td>@InventoryItem.Quantity</td>
@@ -82,7 +86,7 @@
                             </p>
                         </td>
 
-                        @if (InventoryItem.LastTakenOutOn == default(DateTime))
+                        @if (InventoryItem.LastTakenOutOn == default(DateTime)) //displaying empty column if the item has not been taken out once
                         {
                             <td>
                             </td>
@@ -90,18 +94,17 @@
                         else
                         {
                             <td>
-                                @InventoryItem.LastTakenOutOn.ToString("MMM dd, yyyy h:mm tt")
+                                @InventoryItem.LastTakenOutOn.ToString("MMM dd, yyyy h:mm tt") @*converting date to string format for detailed view of date*@
                             </td>
                         }
-                        <td>
 
-                            <button class="btn btn-danger mx-2 @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteItemDialog(InventoryItem)">
+                        <td>
+                            <button class="btn btn-danger mx-2 @(_role == "User" ? "display-none" : "" )" type="button" @onclick="()=>OpenDeleteItemDialog(InventoryItem)"> @*showing the button only for admin*@
                                 <span class="oi oi-delete mx-1" /><b>Delete</b>
                             </button>
 
-
                             <button class="btn btn-success @(_role == "Admin" ? "display-none" : "" ) @(Utils.CheckInventoryOpeningTime() ? "": "disabled")" type="button" @onclick="()=>OpenTakeItemDialog(InventoryItem)">
-                                <span class="oi oi-success" /><b>Take Item</b>
+                                <span class="oi oi-success" /><b>Request Retrieval</b> @*showing the button only for staff*@
                             </button>
                         </td>
                     </tr>
@@ -114,11 +117,11 @@
 @if (_showeditInventoryDialog)
 {
     <ModalDialog Title="@_dialogTitle" OnClose="@OneditInventoryDialogClose" OkLabel="@_dialogOkLabel">
-        <div class="form-floating">
+        <div class="form-floating my-1">
             <input id="itemName" type="text" class="form-control" @bind="_inventoryModel.ItemName" placeholder="Item Name" />
             <label for="itemName">Item Name</label>
         </div>
-        <div class="form-floating">
+        <div class="form-floating my-1">
             <input id="Quantity" type="number" class="form-control" @bind="_inventoryModel.Quantity" placeholder="Task Name" />
             <label for="Quantity">Quantity</label>
         </div>
@@ -180,7 +183,7 @@
     private string _editInventoryErrorMessage { get; set; }
     private string _deleteInventoryErrorMessage { get; set; }
     private InventoryItem _inventoryModel { get; set; }
-    private string _sortBy = "dueDate";
+    private string _sortBy = "";
     private string _sortDirection = "ascending";
     private User _user;
     private string _role;
@@ -220,7 +223,7 @@
     private void SearchItemName(ChangeEventArgs e)
     {
         var searchTerm = e.Value.ToString();
-        if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length >= 1)
+        if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length >= 1) //search starts after character is 1 or more
         {
             _inventory = InventoryService.GetAll().Where(t =>
             t.ItemName.ToLower().Contains(searchTerm.ToLower())).ToList();

@@ -2,5 +2,5 @@
 
 public class GlobalState
 {
-    public User CurrentUser { get; set; }
+    public User CurrentUser { get; set; } //stores the current user of the application
 }

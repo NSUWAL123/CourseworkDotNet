@@ -2,6 +2,7 @@
 
 namespace Coursework1;
 
+//The entry point of the application for executing the application.
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()

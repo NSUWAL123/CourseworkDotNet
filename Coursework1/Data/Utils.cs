@@ -6,6 +6,7 @@ public static class Utils
 {
     private const char _segmentDelimiter = ':';
 
+    //Converts plain user password to hashed form.
     public static string HashSecret(string input)
     {
         var saltSize = 16;
@@ -24,6 +25,7 @@ public static class Utils
         );
     }
 
+    //Verifies if the plain password equals the hashed password.
     public static bool VerifyHash(string input, string hashString)
     {
         string[] segments = hashString.Split(_segmentDelimiter);
@@ -42,17 +44,18 @@ public static class Utils
         return CryptographicOperations.FixedTimeEquals(inputHash, hash);
     }
 
+    //Checks the working day and hour of the bike servicing center.
     public static bool CheckInventoryOpeningTime()
     {
-        var CurrentTime = DateTime.Now;
+        var CurrentTime = DateTime.Now; //Stores current date and time of the day
         var StartTime = Convert.ToDateTime("09:00:00");
-        var EndTime = Convert.ToDateTime("17:00:00");
-        string Today = DateTime.Now.DayOfWeek.ToString();
+        var EndTime = Convert.ToDateTime("16:00:00");
+        string Today = DateTime.Now.DayOfWeek.ToString(); //Stores current day of the week
 
 
-        if (Today != "Saturday" && Today != "Sunday")
+        if (Today != "Saturday" && Today != "Sunday") //checks if current day is saturday or not
         {
-            if (CurrentTime >= StartTime && CurrentTime <= EndTime)
+            if (CurrentTime >= StartTime && CurrentTime <= EndTime) //checks current time with start and end time
             {
                 return true;
             }
@@ -60,6 +63,7 @@ public static class Utils
         return false;
     }
 
+    //Returns the main app directory path.
     public static string GetAppDirectoryPath()
     {
         return Path.Combine(
@@ -68,23 +72,21 @@ public static class Utils
         );
     }
 
+    //Returns the staff record file path.
     public static string GetStaffRecordFilePath()
     {
         return Path.Combine(GetAppDirectoryPath(), "users.json");
     }
 
+    //Returns the inventory record file path.
     public static string GetInventoryRecordFilePath()//userId
     {
         return Path.Combine(GetAppDirectoryPath(), "_inventory.json");
     }
 
+    //Returns the requested item record file path.
     public static string GetItemRequestFilePath()//userId
     {
         return Path.Combine(GetAppDirectoryPath(), "_item_request_demo1.json");
-    }
-
-    public static string ItemsTakenOutRecordFilePath()//userId
-    {
-        return Path.Combine(GetAppDirectoryPath(), "_item_taken_out_demo.json");
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/graph"
+﻿@page "/bar-chart"
 
 @using System.Linq
 
@@ -6,6 +6,7 @@
     <h1 class="navbar-brand mb-0 h1"><b>Bar Graph of Each Items Taken Out</b></h1>
 </nav>
 
+@*The following are the components from Mudblazor*@
 <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px">
     <CustomGraphics>
         <style>
@@ -19,6 +20,7 @@
             }
         </style>
         
+        @*Y-axis labels*@
         <text x="-60" y="185" class="light">🠕</text>
         <text x="-80" y="205" class="light">Number</text>
         <text x="-80" y="225" class="light">Taken Out</text>
@@ -36,7 +38,7 @@
     {
         _requestedItems = InventoryService.GetAllRequestedItem();
 
-        // Group the requested items by ItemName and sum the Quantity
+        // Grouping the requested items based on ItemName then sum the quantity
         var groupedItems = _requestedItems
             .Where(item => item.ApprovalStatus == true)
             .GroupBy(item => item.ItemName)
@@ -49,8 +51,8 @@
         {
             new ChartSeries()
         {
-            Name = "Item Name ➜",
-            Data = groupedItems.Select(item => Convert.ToDouble(item.Quantity)).ToArray()
+            Name = "Item Name ➜", //X-axis label
+            Data = groupedItems.Select(item => Convert.ToDouble(item.Quantity)).ToArray() //quantity datatype needed to be converted to double as "Data" only accepts double data type
 }
         };
         XAxisLabels = groupedItems.Select(item => item.ItemName).ToArray();

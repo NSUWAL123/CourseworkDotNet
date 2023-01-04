@@ -6,10 +6,11 @@ namespace Coursework1.Data;
 
 public static class InventoryService
 {
+    //Saves all items to the file.
     private static void SaveAll(List<InventoryItem> inventory)
     {
         string appDataDirectoryPath = Utils.GetAppDirectoryPath();
-        string inventoryFilePath = Utils.GetInventoryRecordFilePath();
+        string inventoryFilePath = Utils.GetInventoryRecordFilePath(); //path of file where inventory items record are stored
 
         if (!Directory.Exists(appDataDirectoryPath))
         {
@@ -20,6 +21,7 @@ public static class InventoryService
         File.WriteAllText(inventoryFilePath, json);
     }
 
+    //Returns list of items currently saved in the inventory file.
     public static List<InventoryItem> GetAll()
     {
         string inventoryFilePath = Utils.GetInventoryRecordFilePath();
@@ -32,27 +34,28 @@ public static class InventoryService
         return JsonSerializer.Deserialize<List<InventoryItem>>(json);
     }
 
+    //Creates a new item.
     public static List<InventoryItem> Create(string ItemName, int Quantity)
     {
         List<InventoryItem> inventory = GetAll();
 
-        if (ItemName == null)
+        if (ItemName == null) //if no item name is entered
         {
             throw new Exception("Please enter item name.");
         }
-        else if (Quantity < 1)
+        else if (Quantity < 1) //restrict from creating item if quantity entered is not more than 0
         {
             throw new Exception("Quantity should be 1 or more.");
         }
 
         bool itemExists = inventory.Any(x => x.ItemName.ToLower() == ItemName.ToLower());
 
-        if (itemExists)
+        if (itemExists) //updates the value of the item if the item present in the inventory is again tried to be created
         {
             InventoryItem inventoryUpdate = inventory.FirstOrDefault(x => x.ItemName.ToLower() == ItemName.ToLower());
-            inventoryUpdate.Quantity += Quantity;
+            inventoryUpdate.Quantity += Quantity; //updating quantity of item in inventory
         }
-        else
+        else //executes if item name is unique than that of the already present items
         {
             inventory.Add(new InventoryItem
             {
@@ -66,34 +69,27 @@ public static class InventoryService
 
     }
 
+    //Deletes an item from the inventory based on item id.
     public static List<InventoryItem> Delete(Guid id)
     {
         List<InventoryItem> inventory = GetAll();
-        InventoryItem inventorys = inventory.FirstOrDefault(x => x.Id == id);
+        InventoryItem inventoryToBeDeleted = inventory.FirstOrDefault(x => x.Id == id);
 
-        if (inventorys == null)
+        if (inventoryToBeDeleted == null)
         {
-            throw new Exception("inventorys not found.");
+            throw new Exception("Item not found.");
         }
 
-        inventory.Remove(inventorys);
+        inventory.Remove(inventoryToBeDeleted);
         SaveAll(inventory);
         return inventory;
     }
 
-    public static void DeleteByUserId()
-    {
-        string inventoryFilePath = Utils.GetInventoryRecordFilePath();
-        if (File.Exists(inventoryFilePath))
-        {
-            File.Delete(inventoryFilePath);
-        }
-    }
-
+    //Updates the quantity of the item.
     public static List<InventoryItem> Update(Guid id, string ItemName, int Quantity)
     {
         List<InventoryItem> inventory = GetAll();
-        InventoryItem inventoryUpdate = inventory.FirstOrDefault(x => x.Id == id);
+        InventoryItem inventoryToBeUpdated = inventory.FirstOrDefault(x => x.Id == id);
 
         if (ItemName == null)
         {
@@ -104,32 +100,34 @@ public static class InventoryService
             throw new Exception("Quantity should be 1 or more.");
         }
 
-        if (inventoryUpdate == null)
+        if (inventoryToBeUpdated == null)
         {
-            throw new Exception("inventorys not found.");
+            throw new Exception("Item not found.");
         }
 
-        inventoryUpdate.ItemName = ItemName;
-        inventoryUpdate.Quantity = Quantity;
+        inventoryToBeUpdated.ItemName = ItemName;
+        inventoryToBeUpdated.Quantity = Quantity;
         SaveAll(inventory);
         return inventory;
     }
 
+    //Updates the last taken-out date of the item.
     public static List<InventoryItem> UpdateByName(string ItemName, DateTime LastTakenOutOn)
     {
         List<InventoryItem> inventory = GetAll();
-        InventoryItem inventoryUpdate = inventory.FirstOrDefault(x => x.ItemName == ItemName);
+        InventoryItem inventoryToBeUpdated = inventory.FirstOrDefault(x => x.ItemName == ItemName);
 
-        if (inventoryUpdate == null)
+        if (inventoryToBeUpdated == null)
         {
-            throw new Exception("inventorys not found.");
+            throw new Exception("Item not found.");
         }
 
-        inventoryUpdate.LastTakenOutOn = LastTakenOutOn;
+        inventoryToBeUpdated.LastTakenOutOn = LastTakenOutOn;
         SaveAll(inventory);
         return inventory;
     }
 
+    //Returns all the requested items by the staff for retrieval.
     public static List<ItemRequest> GetAllRequestedItem()
     {
         string requestedItemFilePath = Utils.GetItemRequestFilePath();
@@ -142,6 +140,7 @@ public static class InventoryService
         return JsonSerializer.Deserialize<List<ItemRequest>>(json);
     }
 
+    //Creates a new request for item retrieval.
     public static List<ItemRequest> CreateRequestItem(string UserName, string ItemName, int Quantity, bool approvalStatus)
     {
         List<ItemRequest> requestedItemList = GetAllRequestedItem();
@@ -158,6 +157,7 @@ public static class InventoryService
         return requestedItemList;
     }
 
+    //Saves all the requested creation and deletion of the requested item.
     private static void SaveAllRequestedItem(List<ItemRequest> requestedItemList)
     {
         string appDataDirectoryPath = Utils.GetAppDirectoryPath();
@@ -172,6 +172,7 @@ public static class InventoryService
         File.WriteAllText(itemRequestFilePath, json);
     }
 
+    //Updates the quantity in inventory and approved status of the item.
     public static List<ItemRequest> EditRequestedItem(Guid id, string UserName, string ItemName, int Quantity, bool approvalStatus, DateTime ApprovedAt, string Admin)
     {
         List<ItemRequest> inventory = GetAllRequestedItem();
@@ -183,7 +184,7 @@ public static class InventoryService
         item.Quantity -= Quantity;
         if (inventoryUpdate == null)
         {
-            throw new Exception("inventorys not found.");
+            throw new Exception("Item not found.");
         }
 
         inventoryUpdate.ItemName = ItemName;
@@ -196,6 +197,7 @@ public static class InventoryService
         return inventory;
     }
 
+    //Deletes requested items from the file in the case of decline. 
     public static List<ItemRequest> RemoveRequestedItem(Guid id, string UserName, string ItemName, int Quantity, bool approvalStatus)
     {
         List<ItemRequest> inventory = GetAllRequestedItem();
@@ -203,7 +205,7 @@ public static class InventoryService
 
         if (inventoryUpdate == null)
         {
-            throw new Exception("inventorys not found.");
+            throw new Exception("Item not found.");
         }
 
         inventory.Remove(inventoryUpdate);
@@ -211,6 +213,7 @@ public static class InventoryService
         return inventory;
     }
 
+    //Validates if the requested quantity is more than 0 and if the requested quantity is less than the current inventory stock for that item.
     public static bool IsValid(int Quantity, int _takenQuantity, string itemName)
     {
         if (Quantity < _takenQuantity)
@@ -219,12 +222,13 @@ public static class InventoryService
         }
         else if (_takenQuantity < 1)
         {
-            throw new Exception("You take less than 1 items.");
+            throw new Exception("You cannot take less than 1 items.");
         }
 
         return true;
     }
 
+    //Checks stock before approval to make sure sufficient item is there to approve the request.
     public static bool StockCheckForApproval(int Quantity, string ItemName)
     {
         List<InventoryItem> inventory = GetAll();
@@ -232,7 +236,7 @@ public static class InventoryService
 
         if (item.Quantity < Quantity)
         {
-            throw new Exception("You take less than 1 items.");
+            throw new Exception("Cannot approve the item because of less stock.");
         }
         return true;
     }

@@ -11,12 +11,14 @@
     <nav class="flex-column">
         <div class="nav-item px-3 mx-3"><h5 class="text-light">Welcome <strong>@Username</strong>!</h5></div>
 
+        @*Link for inventory*@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="inventory">
                 <span class="oi oi-list-rich" /><b>Inventory</b>
             </NavLink>
         </div>
 
+        @*Link for inventory log*@
         @if (UserRole == Role.Admin)
         {
             <div class="nav-item px-3">
@@ -26,6 +28,7 @@
             </div>
         }
 
+        @*Link for manage staff*@
         @if (UserRole == Role.Admin)
         {
             <div class="nav-item px-3">
@@ -35,6 +38,7 @@
             </div>
         }
 
+        @*Link for pending approval*@
         @if (UserRole == Role.Admin)
         {
             <div class="nav-item px-3">
@@ -44,20 +48,25 @@
             </div>
         }
 
+        @*Link for viewing chart*@
         @if (UserRole == Role.Admin)
         {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="graph">
+                <NavLink class="nav-link" href="bar-chart">
                     <span class="oi oi-bar-chart" /><b>View Chart</b>
                 </NavLink>
             </div>
         }
 
+        @*Link for change password*@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="change-password">
                 <span class="oi oi-key" /><b>Change Password</b>
             </NavLink>
         </div>
+
+
+        @*Link for logout*@
         <div class="nav-item px-3 logout-btn mt-5">
             <NavLink class="nav-link text-white bg-danger px-16" role="button" @onclick="LogoutHandler">
                 <span class="oi oi-account-logout" /><b>Logout</b>
